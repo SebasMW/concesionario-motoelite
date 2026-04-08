@@ -8,7 +8,7 @@ app.use(express.json());
 
 // Crear pool de conexiones
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
+  host: process.env.DB_HOST || "db",
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "root",
   database: process.env.DB_NAME || "concesionario",
@@ -126,7 +126,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.listen(3000, () => {
+app.listen(3000, "0.0.0.0", () => {
   console.log("✅ API corriendo en puerto 3000");
   console.log("🗄️ Conectado a MySQL");
 });

@@ -1,212 +1,167 @@
-# 🏍️ Concesionario Elite - MotoElite
+# Concesionario MotoElite
+---
 
-Aplicación web full-stack para gestionar un concesionario de motocicletas con Docker, Node.js y MySQL.
+##  Descripción del proyecto
 
-## 🛠️ Tecnologías
+Este proyecto consiste en una aplicación web para gestionar un concesionario de motos.
+Permite listar, crear y eliminar motos mediante una API REST.
 
-- **Backend**: Node.js + Express
-- **Base de Datos**: MySQL 8.0
-- **Frontend**: HTML5 + Vanilla JavaScript
-- **Contenedores**: Docker + Docker Compose
+La aplicación está dividida en tres servicios:
 
-## 📋 Requisitos Previos
+* Backend (API REST)
+* Frontend (cliente web)
+* Base de datos (MySQL)
 
-- Docker (versión 20.10+)
-- Docker Compose (versión 1.29+)
+El frontend consume el backend mediante un proxy inverso configurado con Nginx.
 
-## 🚀 Instalación y Ejecución
+---
 
-### 1. Clonar el repositorio
+## Tecnologías utilizadas
+
+* Node.js + Express (Backend)
+* HTML + JavaScript (Frontend)
+* Nginx (Servidor web + Proxy inverso)
+* MySQL (Base de datos)
+* Docker (Contenedores)
+* Redes Docker
+* Volúmenes Docker
+
+---
+
+## Estructura del proyecto
+
 ```bash
-cd /home/sebastianWM/Descargas/Concesionario_MotoElite
+/back
+/front
+README.md
 ```
 
-### 2. Iniciar los contenedores
+---
+#  DESPLIEGUE COMPLETO (PASO A PASO)
+
+## 1️⃣ Crear redes
+
 ```bash
-docker-compose up --build
-```
-
-Esto inicializará:
-- **MySQL** (puerto 3306)
-- **Backend API** (puerto 3000)
-- **Frontend** (puerto 8080)
-
-### 3. Acceder a la aplicación
-```
-http://localhost:8080
-```
-
-## 📡 API Endpoints
-
-### Obtener todas las motos
-```
-GET /motos
-```
-
-### Obtener moto por ID
-```
-GET /motos/:id
-```
-
-### Crear nueva moto
-```
-POST /motos
-Content-Type: application/json
-
-{
-  "nombre": "Harley-Davidson Street 750",
-  "marca": "Harley-Davidson",
-  "precio": 8500,
-  "imagen": "https://..."
-}
-```
-
-### Actualizar moto
-```
-PUT /motos/:id
-Content-Type: application/json
-
-{
-  "nombre": "Nuevo nombre",
-  "marca": "Nueva marca",
-  "precio": 9000,
-  "imagen": "https://..."
-}
-```
-
-### Eliminar moto
-```
-DELETE /motos/:id
-```
-
-### Health Check
-```
-GET /health
-```
-
-## 📊 Esquema de Base de Datos
-
-### Tabla: motos
-```sql
-CREATE TABLE motos (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(100) NOT NULL,
-  marca VARCHAR(100) NOT NULL,
-  precio INT NOT NULL,
-  imagen LONGTEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-```
-
-## 🗄️ Credenciales MySQL
-
-- **Usuario**: admin
-- **Contraseña**: admin
-- **Base de datos**: motos
-- **Host**: db (dentro de Docker)
-- **Puerto**: 3306
-
-## 🐳 Comandos Docker Útiles
-
-### Ver los contenedores en ejecución
-```bash
-docker-compose ps
-```
-
-### Ver logs del backend
-```bash
-docker-compose logs backend
-```
-
-### Ver logs de MySQL
-```bash
-docker-compose logs db
-```
-
-### Detener los contenedores
-```bash
-docker-compose down
-```
-
-### Detener y eliminar todo (incluyendo volúmenes)
-```bash
-docker-compose down -v
-```
-
-### Acceder a la consola MySQL
-```bash
-docker exec -it motos_db mysql -u admin -p motos
-# Contraseña: admin
-```
-
-## 📁 Estructura del Proyecto
-
-```
-Concesionario_MotoElite/
-├── backend/
-│   ├── server.js          # API Express
-│   ├── package.json       # Dependencias Node
-│   ├── init.sql           # Script SQL inicial
-│   └── Dockerfile
-├── frontend/
-│   ├── index.html         # App web
-│   └── Dockerfile
-├── docker-compose.yml     # Configuración Docker
-└── README.md             # Este archivo
-```
-
-## ✨ Características
-
-✅ CRUD completo de motos  
-✅ Validación de datos  
-✅ Manejo de errores robusto  
-✅ Interfaz responsiva  
-✅ Datos iniciales precargados  
-✅ Timestamps automáticos  
-✅ Health check endpoint  
-
-## 🔧 Desarrollo
-
-### Modificar el Backend
-1. Editar `backend/server.js`
-2. Ejecutar: `docker-compose down` y `docker-compose up --build`
-
-### Modificar la Base de Datos
-1. Editar `backend/init.sql`
-2. Eliminar volúmenes: `docker-compose down -v`
-3. Reiniciar: `docker-compose up --build`
-
-### Modificar el Frontend
-1. Editar `frontend/index.html`
-2. Recargar el navegador
-
-## 📝 Notas
-
-- La base de datos se inicializa automáticamente con 6 motos de ejemplo
-- Los datos persisten en el volumen `db_data`
-- El backend espera que MySQL esté disponible antes de iniciar
-- CORS está habilitado para todas las rutas
-
-## 🐛 Troubleshooting
-
-### Error: "Cannot connect to database"
-- Asegurate que MySQL está en ejecución: `docker-compose logs db`
-- Espera 5-10 segundos para que MySQL termine de inicializar
-
-### Error: "Port already in use"
-- Cambia los puertos en `docker-compose.yml`
-
-### Error: "Module not found"
-- Ejecuta: `docker-compose down -v` y `docker-compose up --build`
-
-## 📞 Soporte
-
-Para reportar problemas, revisa los logs con:
-```bash
-docker-compose logs -f
+docker network create front_net
+docker network create back_net
 ```
 
 ---
 
-**Desarrollado con ❤️ para MotoElite** 🏍️
+## 2️⃣ Crear volumen para la base de datos
+
+```bash
+docker volume create mysql_data
+```
+
+---
+
+## 3️⃣ Ejecutar base de datos
+
+```bash
+docker run -d \
+  --name db \
+  --network back_net \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=concesionario \
+  -v mysql_data:/var/lib/mysql \
+  mysql:8
+```
+
+---
+
+## 4️⃣ Construcción de imagen BACKEND (multi-stage)
+
+```bash
+docker build -t backend ./back
+```
+
+---
+
+## 5️⃣ Ejecutar backend
+
+```bash
+docker run -d \
+  --name backend \
+  --network back_net \
+  -p 3001:3000 \
+  backend
+```
+
+---
+
+## 6️⃣ Construcción de imagen FRONTEND (multi-stage + Nginx)
+
+```bash
+docker build -t frontend ./front
+```
+
+---
+
+## 7️⃣ Ejecutar frontend
+
+```bash
+docker run -d \
+  --name frontend \
+  --network front_net \
+  --network back_net \
+  -p 8081:80 \
+  frontend
+```
+
+---
+
+# ACCESO A LA APLICACIÓN
+
+* Frontend: http://localhost:8081
+* Backend: http://localhost:3001
+
+---
+
+# FUNCIONAMIENTO
+
+El frontend realiza peticiones a:
+
+```bash
+/api/motos
+```
+
+Nginx redirige estas peticiones al backend:
+
+```nginx
+location /api/ {
+  proxy_pass http://backend:3000/;
+}
+```
+
+---
+
+# ENDPOINTS
+
+* GET /motos → Obtener motos
+* POST /motos → Crear moto
+* DELETE /motos/:id → Eliminar moto
+
+---
+
+#  CUMPLIMIENTO DE REQUISITOS
+
+✔ Backend con framework (Express)
+✔ Frontend servido con Nginx
+✔ Proxy inverso configurado
+✔ Imágenes Docker personalizadas
+✔ Multi-stage build
+✔ Base de datos con volumen
+✔ Dos redes Docker
+✔ Sin docker-compose
+✔ Arquitectura no monolítica
+✔ Frontend consume backend correctamente
+
+
+---
+
+## 👨‍💻 Autor
+
+SebasMW
+
+```
